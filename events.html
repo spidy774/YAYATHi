@@ -1,0 +1,66 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <title>Events — SCOPE Club | MLRIT</title>
+  <meta name="description"
+    content="SCOPE Club events — active, upcoming, and past. Including AWS Cloud Trek 2026, ZENITH 25, and more." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+
+<body>
+
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <div class="ambient-bg" aria-hidden="true"></div>
+  <div id="cursor-field" aria-hidden="true"></div>
+
+  <div id="nav-root"></div>
+
+  <main id="main-content">
+    <section class="page-header">
+      <div class="container">
+        <p class="eyebrow">// scope events</p>
+        <h1 class="reveal">Events</h1>
+        <p class="reveal">Everything we run — live, upcoming, and past. Filter by status below.</p>
+
+        <div class="tabs reveal" role="tablist" aria-label="Filter events by status">
+          <button class="tab" role="tab" data-status="active" aria-selected="false">
+            <span class="tab-dot tab-dot--live" aria-hidden="true"></span> Active
+          </button>
+          <button class="tab" role="tab" data-status="upcoming" aria-selected="false">
+            <span class="tab-dot tab-dot--upcoming" aria-hidden="true"></span> Upcoming
+          </button>
+          <button class="tab" role="tab" data-status="past" aria-selected="false">Past</button>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding-top:0;">
+      <div class="container">
+        <div class="grid" id="events-grid" aria-live="polite" aria-label="Events list"></div>
+      </div>
+    </section>
+  </main>
+
+  <div id="footer-root"></div>
+  <div class="modal-backdrop" id="event-modal-backdrop" role="presentation"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/components.js"></script>
+  <script>mountLayout("events.html");</script>
+  <script src="js/main.js"></script>
+  <script src="js/events.js"></script>
+  <script src="js/chatbot.js"></script>
+
+</body>
+
+</html>

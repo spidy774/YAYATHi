@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360">
+  <rect width="640" height="360" fill="#0b1114"/>
+  <g stroke="#3dffa8" stroke-opacity="0.25">
+    <line x1="0" y1="60" x2="640" y2="60"/>
+    <line x1="0" y1="180" x2="640" y2="180"/>
+    <line x1="0" y1="300" x2="640" y2="300"/>
+  </g>
+  <text x="320" y="190" fill="#5c6d67" font-family="monospace" font-size="18" text-anchor="middle">event banner placeholder</text>
+</svg>

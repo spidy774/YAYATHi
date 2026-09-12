@@ -1,0 +1,501 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <title>SCOPE Club — Official Technical Club of MLRIT</title>
+  <meta name="description"
+    content="SCOPE Club is the official technical club of MLR Institute of Technology, Hyderabad. We run hackathons, coding contests, cloud workshops, and real projects across web, app, ML, and more." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="index.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="SCOPE Club — Official Technical Club of MLRIT" />
+  <meta property="og:description" content="Build. Break. Ship. Join SCOPE — MLRIT's most active technical club." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="assets/images/branding/scope-club-logo.jpg" />
+
+  <!-- Fonts — preconnect for performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+
+<body>
+
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- Atmosphere layers -->
+  <div class="ambient-bg" aria-hidden="true"></div>
+  <div id="cursor-field" aria-hidden="true"></div>
+  <canvas id="particle-canvas" aria-hidden="true"></canvas>
+
+  <!-- Nav injection target -->
+  <div id="nav-root"></div>
+
+  <main id="main-content">
+
+    <!-- ============================================================
+       HERO
+       ============================================================ -->
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="container">
+        <div class="hero-inner">
+
+          <div class="hero-content">
+            <p class="eyebrow">// school of programming excellence · mlrit</p>
+            <h1 class="hero-title" id="hero-heading">
+              Build.<br>
+              <span class="accent-word">Break.</span><br>
+              <span class="muted-word">Ship.</span>
+            </h1>
+            <p class="hero-subtitle">
+              SCOPE is the official technical club of MLRIT — a community where students
+              learn real skills, run real events, and build real things. From hackathons
+              to cloud computing, we go beyond the classroom.
+            </p>
+            <div class="hero-actions">
+              <a href="join.html" class="btn btn-primary">Join SCOPE →</a>
+              <a href="events.html" class="btn">View Events</a>
+              <a href="resources.html" class="btn">Resources</a>
+            </div>
+          </div>
+
+          <div class="hero-visual" aria-hidden="true">
+            <div class="hero-badge-card">
+              <span class="dim">$ scope --status</span><br>
+              <span class="acc">✓</span> <span class="dim">Club:</span> <span class="acc">SCOPE MLRIT</span><br>
+              <span class="acc">✓</span> <span class="dim">Domain:</span> <span class="cyn">Technical</span><br>
+              <span class="acc">✓</span> <span class="dim">Event:</span> <span class="acc">AWS Cloud Trek</span><br>
+              <span class="acc">●</span> <span class="dim">Status:</span> <span class="acc">LIVE</span><br>
+              <span class="dim">──────────────────</span><br>
+              <span class="dim">Ready to</span> <span class="acc">build</span> <span class="dim">with us?</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+       ABOUT / INSIDE SCOPE
+       ============================================================ -->
+    <section class="about-section" aria-labelledby="about-heading">
+      <div class="container">
+        <div class="about-grid">
+
+          <div>
+            <p class="eyebrow">// inside scope</p>
+            <h2 id="about-heading" class="reveal">The club that builds<br>beyond the classroom.</h2>
+            <p class="reveal" style="max-width:52ch;">
+              Founded to build a strong coding culture on campus, SCOPE started with a
+              simple mission — help students learn, collaborate, and grow beyond the classroom.
+              What began as a community focused on programming and problem-solving has grown
+              into one of the most active technical clubs at MLRIT.
+            </p>
+            <p class="reveal" style="max-width:52ch;">
+              Over the years, SCOPE has organised campus coding contests like SPLASH, game
+              development hackathons such as GameHub 2.0, and major flagship events like
+              ZENITH 24 – DataVoyage and ZENITH 25. The club has also expanded into cloud
+              computing, hosting a two-day AWS Cloud Workshop in collaboration with
+              AWS Cloud Club MLRIT, and built CodeStats — a coding assessment platform
+              created by students, for students.
+            </p>
+            <p class="reveal" style="max-width:52ch;">
+              Today, SCOPE covers Web Development, App Development, Game Development,
+              AI/ML, Open Source, and more. More than just events, SCOPE is a platform
+              where seniors mentor juniors, students work on real projects, and a
+              supportive technical community thrives beyond hostel boundaries.
+            </p>
+            <p class="reveal" style="max-width:52ch; margin-top:0.5em;">
+              <strong style="color:var(--text);">At SCOPE, we don't just learn technology — we build with it.</strong>
+            </p>
+          </div>
+
+          <div>
+            <ul class="about-story-list" aria-label="SCOPE milestones">
+              <li class="about-story-item reveal">
+                <span class="about-story-icon" aria-hidden="true">🏆</span>
+                <p class="about-story-text">
+                  <strong style="color:var(--text);">ZENITH</strong> — SCOPE's flagship annual technical festival,
+                  bringing inter-college competitions, workshops, and a major prize pool to MLRIT.
+                </p>
+              </li>
+              <li class="about-story-item reveal">
+                <span class="about-story-icon" aria-hidden="true">☁️</span>
+                <p class="about-story-text">
+                  <strong style="color:var(--text);">AWS Cloud Workshops</strong> — two-day cloud deep-dives
+                  co-hosted with AWS Cloud Club MLRIT, covering S3, EC2, deployments, and agentic AI.
+                </p>
+              </li>
+              <li class="about-story-item reveal">
+                <span class="about-story-icon" aria-hidden="true">🎮</span>
+                <p class="about-story-text">
+                  <strong style="color:var(--text);">GameHub 2.0</strong> — game development hackathon where
+                  teams built and shipped real games from scratch over a weekend.
+                </p>
+              </li>
+              <li class="about-story-item reveal">
+                <span class="about-story-icon" aria-hidden="true">📊</span>
+                <p class="about-story-text">
+                  <strong style="color:var(--text);">CodeStats</strong> — a coding assessment platform built by
+                  SCOPE members, for students. Student-made tooling at its best.
+                </p>
+              </li>
+              <li class="about-story-item reveal">
+                <span class="about-story-icon" aria-hidden="true">⚡</span>
+                <p class="about-story-text">
+                  <strong style="color:var(--text);">SPLASH</strong> — campus coding contests focused on
+                  logical thinking, DSA, algorithms, and competitive programming speed.
+                </p>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+       WHAT WE DO
+       ============================================================ -->
+    <section aria-labelledby="wwd-heading">
+      <div class="container">
+        <div class="section-header">
+          <p class="eyebrow">// what we do</p>
+          <h2 id="wwd-heading" class="reveal">Technical areas we cover</h2>
+          <p class="reveal">
+            From mobile apps to machine learning, SCOPE members work across the full
+            spectrum of modern software engineering.
+          </p>
+        </div>
+
+        <div class="what-we-do-grid" id="wwd-grid">
+
+          <div class="wwd-scene reveal" tabindex="0" role="button" aria-label="Web Development — click to explore"
+            aria-pressed="false">
+            <div class="wwd-flipper">
+              <div class="wwd-face wwd-front">
+                <span class="wwd-icon" aria-hidden="true">🌐</span>
+                <h3 class="wwd-title">Web Development</h3>
+                <p class="wwd-desc">Frontend, backend, full-stack — building and shipping web products.</p>
+                <span class="wwd-flip-hint" aria-hidden="true">tap to explore →</span>
+              </div>
+              <div class="wwd-face wwd-back" aria-hidden="true">
+                <span class="wwd-back-icon" aria-hidden="true">🌐</span>
+                <h3 class="wwd-back-title">Web Development</h3>
+                <ul class="wwd-back-list">
+                  <li>HTML, CSS, JavaScript fundamentals</li>
+                  <li>React, Vue, or plain JS frameworks</li>
+                  <li>Node.js, Express, REST APIs</li>
+                  <li>Responsive design &amp; accessibility</li>
+                </ul>
+                <a href="resources.html?category=Frontend" class="wwd-back-link">Browse resources →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="wwd-scene reveal" tabindex="0" role="button" aria-label="App Development — click to explore"
+            aria-pressed="false">
+            <div class="wwd-flipper">
+              <div class="wwd-face wwd-front">
+                <span class="wwd-icon" aria-hidden="true">📱</span>
+                <h3 class="wwd-title">App Development</h3>
+                <p class="wwd-desc">Native and cross-platform mobile apps using Flutter, React Native, and Kotlin.</p>
+                <span class="wwd-flip-hint" aria-hidden="true">tap to explore →</span>
+              </div>
+              <div class="wwd-face wwd-back" aria-hidden="true">
+                <span class="wwd-back-icon" aria-hidden="true">📱</span>
+                <h3 class="wwd-back-title">App Development</h3>
+                <ul class="wwd-back-list">
+                  <li>Flutter for cross-platform apps</li>
+                  <li>React Native for JS developers</li>
+                  <li>Kotlin for native Android</li>
+                  <li>Swift / SwiftUI for iOS</li>
+                </ul>
+                <a href="resources.html?category=AppDev" class="wwd-back-link">Browse resources →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="wwd-scene reveal" tabindex="0" role="button" aria-label="AI and ML — click to explore"
+            aria-pressed="false">
+            <div class="wwd-flipper">
+              <div class="wwd-face wwd-front">
+                <span class="wwd-icon" aria-hidden="true">🧠</span>
+                <h3 class="wwd-title">AI / ML</h3>
+                <p class="wwd-desc">Machine learning, deep learning, and data science — from notebooks to deployments.
+                </p>
+                <span class="wwd-flip-hint" aria-hidden="true">tap to explore →</span>
+              </div>
+              <div class="wwd-face wwd-back" aria-hidden="true">
+                <span class="wwd-back-icon" aria-hidden="true">🧠</span>
+                <h3 class="wwd-back-title">AI / ML</h3>
+                <ul class="wwd-back-list">
+                  <li>Python, NumPy, Pandas, Matplotlib</li>
+                  <li>Scikit-learn &amp; classical ML models</li>
+                  <li>PyTorch / TensorFlow deep learning</li>
+                  <li>Kaggle competitions &amp; datasets</li>
+                </ul>
+                <a href="resources.html?category=ML" class="wwd-back-link">Browse resources →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="wwd-scene reveal" tabindex="0" role="button" aria-label="Cloud Computing — click to explore"
+            aria-pressed="false">
+            <div class="wwd-flipper">
+              <div class="wwd-face wwd-front">
+                <span class="wwd-icon" aria-hidden="true">☁️</span>
+                <h3 class="wwd-title">Cloud Computing</h3>
+                <p class="wwd-desc">AWS infrastructure, serverless, deployments, and cloud-native architecture.</p>
+                <span class="wwd-flip-hint" aria-hidden="true">tap to explore →</span>
+              </div>
+              <div class="wwd-face wwd-back" aria-hidden="true">
+                <span class="wwd-back-icon" aria-hidden="true">☁️</span>
+                <h3 class="wwd-back-title">Cloud Computing</h3>
+                <ul class="wwd-back-list">
+                  <li>Amazon S3, EC2, Lambda, RDS</li>
+                  <li>Serverless functions &amp; deployments</li>
+                  <li>AWS Cloud Practitioner concepts</li>
+                  <li>Agentic AI on cloud infrastructure</li>
+                </ul>
+                <a href="resources.html?category=DevOps" class="wwd-back-link">Browse resources →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="wwd-scene reveal" tabindex="0" role="button" aria-label="Game Development — click to explore"
+            aria-pressed="false">
+            <div class="wwd-flipper">
+              <div class="wwd-face wwd-front">
+                <span class="wwd-icon" aria-hidden="true">🎮</span>
+                <h3 class="wwd-title">Game Development</h3>
+                <p class="wwd-desc">Game design, Unity/Godot projects, and game-jam style hackathons.</p>
+                <span class="wwd-flip-hint" aria-hidden="true">tap to explore →</span>
+              </div>
+              <div class="wwd-face wwd-back" aria-hidden="true">
+                <span class="wwd-back-icon" aria-hidden="true">🎮</span>
+                <h3 class="wwd-back-title">Game Development</h3>
+                <ul class="wwd-back-list">
+                  <li>Unity (C#) game engine basics</li>
+                  <li>Godot Engine (GDScript / C#)</li>
+                  <li>2D / 3D game mechanics &amp; physics</li>
+                  <li>GameHub 2.0 — ship a game weekend</li>
+                </ul>
+                <a href="events.html" class="wwd-back-link">See past events →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="wwd-scene reveal" tabindex="0" role="button" aria-label="Open Source — click to explore"
+            aria-pressed="false">
+            <div class="wwd-flipper">
+              <div class="wwd-face wwd-front">
+                <span class="wwd-icon" aria-hidden="true">🔓</span>
+                <h3 class="wwd-title">Open Source</h3>
+                <p class="wwd-desc">Contributing to and maintaining real open-source projects as a team.</p>
+                <span class="wwd-flip-hint" aria-hidden="true">tap to explore →</span>
+              </div>
+              <div class="wwd-face wwd-back" aria-hidden="true">
+                <span class="wwd-back-icon" aria-hidden="true">🔓</span>
+                <h3 class="wwd-back-title">Open Source</h3>
+                <ul class="wwd-back-list">
+                  <li>Git &amp; GitHub workflows</li>
+                  <li>Pull requests, forks, code review</li>
+                  <li>Finding good-first-issue tickets</li>
+                  <li>Building tools used by real people</li>
+                </ul>
+                <a href="resources.html?category=Git" class="wwd-back-link">Browse Git resources →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="wwd-scene reveal" tabindex="0" role="button"
+            aria-label="Hackathons and Contests — click to explore" aria-pressed="false">
+            <div class="wwd-flipper">
+              <div class="wwd-face wwd-front">
+                <span class="wwd-icon" aria-hidden="true">🏆</span>
+                <h3 class="wwd-title">Hackathons &amp; Contests</h3>
+                <p class="wwd-desc">Competitive programming (SPLASH), game jams, and the annual ZENITH fest.</p>
+                <span class="wwd-flip-hint" aria-hidden="true">tap to explore →</span>
+              </div>
+              <div class="wwd-face wwd-back" aria-hidden="true">
+                <span class="wwd-back-icon" aria-hidden="true">🏆</span>
+                <h3 class="wwd-back-title">Hackathons &amp; Contests</h3>
+                <ul class="wwd-back-list">
+                  <li>SPLASH — campus coding contest</li>
+                  <li>ZENITH — annual technical festival</li>
+                  <li>__init__ Saga — hackathon with prizes</li>
+                  <li>GameHub 2.0 — game-dev weekend</li>
+                </ul>
+                <a href="events.html" class="wwd-back-link">Browse all events →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="wwd-scene reveal" tabindex="0" role="button" aria-label="Mentorship — click to explore"
+            aria-pressed="false">
+            <div class="wwd-flipper">
+              <div class="wwd-face wwd-front">
+                <span class="wwd-icon" aria-hidden="true">🤝</span>
+                <h3 class="wwd-title">Mentorship</h3>
+                <p class="wwd-desc">Seniors mentoring juniors, peer learning, and knowledge-sharing sessions.</p>
+                <span class="wwd-flip-hint" aria-hidden="true">tap to explore →</span>
+              </div>
+              <div class="wwd-face wwd-back" aria-hidden="true">
+                <span class="wwd-back-icon" aria-hidden="true">🤝</span>
+                <h3 class="wwd-back-title">Mentorship</h3>
+                <ul class="wwd-back-list">
+                  <li>Senior ↔ junior pairing by domain</li>
+                  <li>Code review &amp; guided learning</li>
+                  <li>Project collaboration across years</li>
+                  <li>Open to all MLRIT students</li>
+                </ul>
+                <a href="join.html" class="wwd-back-link">Join SCOPE →</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+       ACTIVE EVENT PREVIEW
+       ============================================================ -->
+    <section aria-labelledby="events-preview-heading"
+      style="background:var(--bg-elevated); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+      <div class="container">
+        <div class="section-header">
+          <p class="eyebrow">// happening now</p>
+          <h2 id="events-preview-heading" class="reveal">Active &amp; upcoming events</h2>
+        </div>
+        <div class="grid" id="home-events-preview"></div>
+        <div class="mt-4">
+          <a href="events.html" class="btn">View all events →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+       WHY JOIN
+       ============================================================ -->
+    <section class="why-join-section" aria-labelledby="why-join-heading">
+      <div class="container">
+        <div class="section-header">
+          <p class="eyebrow">// why join scope</p>
+          <h2 id="why-join-heading" class="reveal">A place to grow as an engineer</h2>
+          <p class="reveal">
+            Not just a club — a technical community where you build real skills alongside
+            people who take engineering seriously.
+          </p>
+        </div>
+
+        <div class="why-join-grid">
+          <div class="why-item reveal">
+            <span class="why-icon" aria-hidden="true">🛠️</span>
+            <div class="why-content">
+              <h3>Build real things</h3>
+              <p>Work on actual projects, not just toy exercises. Ship code that runs.</p>
+            </div>
+          </div>
+          <div class="why-item reveal">
+            <span class="why-icon" aria-hidden="true">👥</span>
+            <div class="why-content">
+              <h3>Peer mentorship</h3>
+              <p>Seniors who've been through it mentor juniors directly — no gatekeeping.</p>
+            </div>
+          </div>
+          <div class="why-item reveal">
+            <span class="why-icon" aria-hidden="true">⚡</span>
+            <div class="why-content">
+              <h3>Learn by competing</h3>
+              <p>Hackathons and contests sharpen your skills faster than any lecture can.</p>
+            </div>
+          </div>
+          <div class="why-item reveal">
+            <span class="why-icon" aria-hidden="true">☁️</span>
+            <div class="why-content">
+              <h3>Industry exposure</h3>
+              <p>Workshops with AWS, hands-on cloud infrastructure, real tooling from day one.</p>
+            </div>
+          </div>
+          <div class="why-item reveal">
+            <span class="why-icon" aria-hidden="true">🌐</span>
+            <div class="why-content">
+              <h3>Broad domain coverage</h3>
+              <p>Web, app, ML, cloud, open source — explore what you want to pursue.</p>
+            </div>
+          </div>
+          <div class="why-item reveal">
+            <span class="why-icon" aria-hidden="true">🤝</span>
+            <div class="why-content">
+              <h3>A real community</h3>
+              <p>SCOPE members collaborate, help each other debug, and grow together beyond class schedules.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+       FINAL CTA
+       ============================================================ -->
+    <section class="cta-strip" aria-labelledby="cta-heading">
+      <div class="container">
+        <p class="eyebrow">// ready?</p>
+        <h2 id="cta-heading" class="reveal">Be part of what we're building.</h2>
+        <p class="reveal">
+          Applications are open. Whether you're a first-year or final-year student,
+          SCOPE has a place for curious builders.
+        </p>
+        <div class="cta-actions">
+          <a href="join.html" class="btn btn-primary">Join SCOPE Club</a>
+          <a href="contact.html" class="btn">Get in Touch</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer injection target -->
+  <div id="footer-root"></div>
+
+  <!-- Event modal target -->
+  <div class="modal-backdrop" id="event-modal-backdrop" role="presentation"></div>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/components.js"></script>
+  <script>
+    mountLayout("index.html");
+
+    /* Render active + upcoming events in preview strip */
+    const previewEvents = SCOPE_EVENTS.filter(e => {
+      const s = getEventStatus(e);
+      return s === "active" || s === "upcoming";
+    }).slice(0, 3);
+
+    const previewEl = document.getElementById("home-events-preview");
+    if (previewEl) {
+      if (previewEvents.length) {
+        previewEl.innerHTML = previewEvents.map(eventCardHTML).join("");
+      } else {
+        previewEl.innerHTML = '<div class="empty-state">No active events right now — check back soon.</div>';
+      }
+    }
+  </script>
+  <script src="js/main.js"></script>
+  <script src="js/events.js"></script>
+  <script src="js/chatbot.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,183 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <title>Join Us — SCOPE Club | MLRIT</title>
+  <meta name="description"
+    content="Join SCOPE Club at MLRIT. Express your interest in web, app, AI/ML, cloud, game development, and more." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+
+<body>
+
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <div class="ambient-bg" aria-hidden="true"></div>
+  <div id="cursor-field" aria-hidden="true"></div>
+
+  <div id="nav-root"></div>
+
+  <main id="main-content">
+    <section class="page-header">
+      <div class="container">
+        <p class="eyebrow">// become a member</p>
+        <h1 class="reveal">Join SCOPE Club</h1>
+        <p class="reveal">
+          SCOPE is open to all MLRIT students who want to build, learn, and grow.
+          Tell us a bit about yourself and what you're interested in.
+        </p>
+      </div>
+    </section>
+
+    <section style="padding-top:0; padding-bottom:clamp(4rem,10vw,7rem);">
+      <div class="container">
+        <div class="join-layout">
+
+          <!-- Pitch -->
+          <div>
+            <p class="eyebrow">// why join</p>
+            <h2 class="reveal" style="margin-bottom:0.5em;">
+              Build with people<br>who get it.
+            </h2>
+            <p class="reveal">
+              SCOPE isn't just a line on your resume. It's where you write your first
+              pull request, win your first hackathon, and figure out what kind of
+              engineer you want to be.
+            </p>
+
+            <ul class="join-pitch-list" aria-label="Reasons to join SCOPE">
+              <li class="join-pitch-item reveal">Real projects — not just theory or toy examples.</li>
+              <li class="join-pitch-item reveal">Seniors who mentor without gatekeeping.</li>
+              <li class="join-pitch-item reveal">Hackathons, contests, and workshops throughout the year.</li>
+              <li class="join-pitch-item reveal">Hands-on cloud and AWS experience.</li>
+              <li class="join-pitch-item reveal">A technical community across domains — web, app, ML, cloud, game dev.
+              </li>
+              <li class="join-pitch-item reveal">Learn by doing, not watching.</li>
+            </ul>
+
+            <div style="margin-top:2rem;" class="reveal">
+              <p class="eyebrow">// open to</p>
+              <p style="font-size:0.92rem;">All MLRIT students — any year, any branch. No prior experience required.</p>
+            </div>
+
+            <div
+              style="margin-top:1.5rem;padding:1.25rem;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);"
+              class="reveal">
+              <p
+                style="font-family:var(--font-mono);font-size:0.78rem;color:var(--accent);margin-bottom:0.4em;letter-spacing:0.08em;">
+                // ALSO REACH US AT</p>
+              <a href="mailto:scopeclub@mlrinstitutions.ac.in" style="font-size:0.9rem;color:var(--text);">
+                scopeclub@mlrinstitutions.ac.in
+              </a>
+            </div>
+          </div>
+
+          <!-- Form -->
+          <div>
+            <h2 class="reveal" style="margin-bottom:0.35em;">Express your interest</h2>
+            <p class="reveal" style="margin-bottom:1.75rem;">
+              Fill this in and we'll get back to you.
+            </p>
+
+            <form class="form reveal" id="join-form" novalidate aria-label="Join SCOPE application form">
+
+              <div class="field">
+                <label for="join-name">Full name *</label>
+                <input type="text" id="join-name" name="name" autocomplete="name" required
+                  placeholder="Your full name" />
+                <div class="field-error" role="alert"></div>
+              </div>
+
+              <div class="field">
+                <label for="join-email">College email *</label>
+                <input type="email" id="join-email" name="email" autocomplete="email" required
+                  placeholder="you@mlrinstitutions.ac.in" />
+                <div class="field-error" role="alert"></div>
+              </div>
+
+              <div class="field">
+                <label for="join-year">Year of study *</label>
+                <select id="join-year" name="year" required>
+                  <option value="">Select year…</option>
+                  <option value="1st Year">1st Year</option>
+                  <option value="2nd Year">2nd Year</option>
+                  <option value="3rd Year">3rd Year</option>
+                  <option value="4th Year">4th Year</option>
+                </select>
+                <div class="field-error" role="alert"></div>
+              </div>
+
+              <div class="field">
+                <label for="join-domain">Domain of interest *</label>
+                <select id="join-domain" name="domain" required>
+                  <option value="">Select domain…</option>
+                  <option value="Web Development">Web Development</option>
+                  <option value="App Development">App Development</option>
+                  <option value="AI / ML">AI / ML</option>
+                  <option value="Cloud Computing">Cloud Computing</option>
+                  <option value="Game Development">Game Development</option>
+                  <option value="Open Source">Open Source</option>
+                  <option value="Not sure yet">Not sure yet</option>
+                </select>
+                <div class="field-error" role="alert"></div>
+              </div>
+
+              <div class="field">
+                <label for="join-why">Why do you want to join SCOPE? *</label>
+                <textarea id="join-why" name="why" rows="4" required
+                  placeholder="Tell us what excites you about SCOPE…"></textarea>
+                <div class="field-error" role="alert"></div>
+              </div>
+
+              <button type="submit" class="btn btn-primary">Submit Interest →</button>
+
+              <div class="form-status" id="join-status" role="status" aria-live="polite"></div>
+              <p class="form-note" id="join-note" style="display:none;">
+                No form backend is configured for this static demo. Your submission was
+                not received — please email us directly at
+                <a href="mailto:scopeclub@mlrinstitutions.ac.in">scopeclub@mlrinstitutions.ac.in</a>
+                with your name, year, and area of interest.
+              </p>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="footer-root"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/components.js"></script>
+  <script>mountLayout("join.html");</script>
+  <script src="js/main.js"></script>
+  <script src="js/forms.js"></script>
+  <script>
+    const joinFieldDefs = [
+      { id: "join-name", label: "Full name", type: "text", required: true },
+      { id: "join-email", label: "College email", type: "email", required: true },
+      { id: "join-year", label: "Year of study", type: "select", required: true },
+      { id: "join-domain", label: "Domain of interest", type: "select", required: true },
+      { id: "join-why", label: "Why you want to join", type: "textarea", required: true },
+    ];
+    initNativeForm(
+      document.getElementById("join-form"),
+      joinFieldDefs,
+      document.getElementById("join-status"),
+      document.getElementById("join-note")
+    );
+  </script>
+  <script src="js/chatbot.js"></script>
+
+</body>
+
+</html>
