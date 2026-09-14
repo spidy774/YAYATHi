@@ -1,13 +1,52 @@
 /* ============================================================
-   SCOPE CLUB — OFFLINE HELP CHATBOT
-   Fully static / client-side. No API key. No network call.
-   Works on S3 static hosting with zero backend.
-   Answers only from the curated SCOPE knowledge base below.
+   SCOPE CLUB — HELP CHATBOT
+   Supports two modes:
+
+   OFFLINE MODE (default — works on pure S3 static hosting):
+     Answers from the curated SCOPE knowledge base (SCOPE_KB).
+     No API calls. No backend required.
+
+   LIVE AI MODE (requires deployed backend):
+     Set CHAT_API_URL to your deployed /api/chat endpoint.
+     Calls the backend which proxies to AWS Bedrock / Anthropic.
+     Falls back to offline KB if the backend is unreachable.
+     Maintains conversation history for multi-turn context.
+
+   HOW TO ENABLE LIVE AI:
+     1. Deploy lambda/chat/index.js (AWS) or api/chat.js (Vercel).
+     2. Replace the empty string below with your endpoint URL:
+        const CHAT_API_URL = "https://your-api-gateway-url/chat";
+     3. The status label updates automatically.
+
+   SECURITY: No API keys are stored here. The key lives on the server.
    ============================================================ */
+
+/* ── Live AI endpoint — leave empty string for offline-only mode ── */
+const CHAT_API_URL = "";   /* e.g. "https://abc.execute-api.ap-south-1.amazonaws.com/chat" */
+
+/* Whether to attempt the live AI backend first before KB fallback */
+const AI_ENABLED = Boolean(CHAT_API_URL && CHAT_API_URL.trim().length > 0);
+
+/* Max conversation turns to send to the AI (older turns are pruned) */
+const MAX_HISTORY_TURNS = 10;
+
+/* ============================================================
+   CONVERSATION HISTORY
+   Only used in live AI mode. Each entry: { role, content }
+   ============================================================ */
+let _conversation = [];
+
+function addToHistory(role, content) {
+  _conversation.push({ role, content });
+  /* Keep only the last MAX_HISTORY_TURNS turns */
+  if (_conversation.length > MAX_HISTORY_TURNS * 2) {
+    _conversation = _conversation.slice(-MAX_HISTORY_TURNS * 2);
+  }
+}
 
 /* ============================================================
    KNOWLEDGE BASE
-   Each entry: { patterns: [string], response: string, link? }
+   Each entry: { id, patterns: [string], response: string, link? }
    Patterns are lowercased keyword/phrase fragments matched
    against the lowercased user message.
    ============================================================ */
@@ -62,7 +101,7 @@ const SCOPE_KB = [
     id: "zenith-25",
     patterns: ["zenith 25", "zenith '25", "zenith25", "december 2025", "cloud voyage",
       "flagship 2025", "zenith fest 2025"],
-    response: "ZENITH '25 — SCOPE's Flagship Annual Technical Fest\n\n📅 18th–20th December 2025\n📍 MLRIT, Hyderabad\n\nThemed 'The Cloud Voyage', ZENITH '25 featured AWS Student Community Day with hands-on workshops, followed by a 2-day hackathon where teams built projects from given problem statements. A blend of learning, innovation, and teamwork.",
+    response: "ZENITH '25 — SCOPE's Flagship Annual Technical Fest\n\n📅 18th–20th December 2025\n📍 MLRIT, Hyderabad\n\nThemed 'The Cloud Voyage', ZENITH '25 featured AWS Student Community Day with hands-on workshops, followed by a 2-day hackathon where teams built projects from given problem statements.",
     link: { label: "View Past Events →", href: "events.html?tab=past" },
   },
   {
@@ -78,7 +117,7 @@ const SCOPE_KB = [
     patterns: ["init saga", "__init__", "init_saga", "init-saga", "april 2025",
       "hackathon 2025", "python init", "28 april", "29 april",
       "agriculture hackathon", "healthcare hackathon", "20000 prize", "rs 20000"],
-    response: "__init__ Saga — April 2025\n\n📅 28th–29th April 2025, 9:30 AM\n📍 MLRIT, Hyderabad\n\nA 2-day hackathon inspired by Python's __init__ method — the beginning of an object's journey. Themes: Agriculture & Food Tech, Healthcare & Well Being, Education & Learning, Travel & Tourism.\n\n💰 Prize pool: ₹20,000 + exciting prizes. Team size: 3–4.",
+    response: "__init__ Saga — April 2025\n\n📅 28th–29th April 2025, 9:30 AM\n📍 MLRIT, Hyderabad\n\nA 2-day hackathon inspired by Python's __init__ method. Themes: Agriculture & Food Tech, Healthcare & Well Being, Education & Learning, Travel & Tourism.\n\n💰 Prize pool: ₹20,000 + exciting prizes. Team size: 3–4.",
     link: { label: "View Past Events →", href: "events.html?tab=past" },
   },
   {
@@ -92,13 +131,12 @@ const SCOPE_KB = [
     id: "splash",
     patterns: ["splash", "coding contest", "coding competition", "competitive programming",
       "dsa contest", "algorithms contest"],
-    response: "SPLASH is SCOPE's campus coding competition focused on logical thinking, DSA, algorithms, and competitive programming speed. It's one of SCOPE's recurring events challenging students to sharpen their problem-solving skills.",
+    response: "SPLASH is SCOPE's campus coding competition focused on logical thinking, DSA, algorithms, and competitive programming speed.",
   },
   {
     id: "gamehub",
-    patterns: ["gamehub", "game hub", "game development event", "game hackathon",
-      "gamehub 2.0"],
-    response: "GameHub 2.0 was SCOPE's game development hackathon where teams designed and built real games from scratch over a weekend. It's part of SCOPE's Game Development domain activities.",
+    patterns: ["gamehub", "game hub", "game development event", "game hackathon", "gamehub 2.0"],
+    response: "GameHub 2.0 was SCOPE's game development hackathon where teams designed and built real games from scratch over a weekend.",
   },
   {
     id: "codestats",
@@ -112,13 +150,12 @@ const SCOPE_KB = [
     id: "resources-general",
     patterns: ["resources", "learning resources", "study material", "where can i learn",
       "where are resources", "find resources", "tutorials", "docs", "documentation"],
-    response: "SCOPE has a curated Resources page with free learning materials across all major domains.\n\nCategories: Python · Frontend · Backend · ML · Git · DevOps · AppDev · Android · iOS\n\nOpen the Resources page and use the category filter to find what you need.",
+    response: "SCOPE has a curated Resources page with free learning materials across all major domains.\n\nCategories include Python, Frontend, Backend, ML, Git, DevOps, AppDev, Android, iOS, GameDev, and OpenSource.\n\nOpen the Resources page and use the category filter to find what you need.",
     link: { label: "Browse Resources →", href: "resources.html" },
   },
   {
     id: "resources-python",
-    patterns: ["python resources", "learn python", "python docs", "python tutorial",
-      "python ebook", "automate boring stuff"],
+    patterns: ["python resources", "learn python", "python docs", "python tutorial", "automate boring stuff"],
     response: "For Python resources, open the Resources page and select the Python filter.\n\nYou'll find the official Python 3 Documentation and 'Automate the Boring Stuff with Python' — a free practical ebook.",
     link: { label: "Python Resources →", href: "resources.html?category=Python" },
   },
@@ -126,36 +163,48 @@ const SCOPE_KB = [
     id: "resources-frontend",
     patterns: ["frontend resources", "web resources", "html css", "javascript resources",
       "mdn", "odin project", "css tricks", "learn frontend", "web development resources"],
-    response: "For Frontend resources, open the Resources page and select Frontend.\n\nIncludes MDN Web Docs, The Odin Project (full curriculum), and CSS Tricks.",
+    response: "For Frontend resources, open the Resources page and select Frontend.\n\nIncludes MDN Web Docs, The Odin Project, and CSS Tricks.",
     link: { label: "Frontend Resources →", href: "resources.html?category=Frontend" },
   },
   {
     id: "resources-backend",
-    patterns: ["backend resources", "nodejs", "fastapi", "server resources",
-      "api resources", "learn backend"],
-    response: "For Backend resources, open the Resources page and select Backend.\n\nIncludes the official Node.js Documentation and FastAPI Documentation.",
+    patterns: ["backend resources", "nodejs", "fastapi", "server resources", "api resources", "learn backend"],
+    response: "For Backend resources, open the Resources page and select Backend.\n\nIncludes Node.js Documentation and FastAPI Documentation.",
     link: { label: "Backend Resources →", href: "resources.html?category=Backend" },
   },
   {
     id: "resources-ml",
     patterns: ["ml resources", "machine learning resources", "deep learning", "fastai",
       "kaggle", "ai resources", "data science resources", "learn ml"],
-    response: "For ML resources, open the Resources page and select ML.\n\nIncludes fast.ai Practical Deep Learning (free course) and Kaggle Learn micro-courses.",
+    response: "For ML resources, open the Resources page and select ML.\n\nIncludes fast.ai Practical Deep Learning and Kaggle Learn.",
     link: { label: "ML Resources →", href: "resources.html?category=ML" },
   },
   {
     id: "resources-git",
-    patterns: ["git resources", "github resources", "version control", "pro git",
-      "github skills", "learn git"],
-    response: "For Git resources, open the Resources page and select Git.\n\nIncludes the Pro Git Book (free online) and GitHub Skills interactive courses.",
+    patterns: ["git resources", "github resources", "version control", "pro git", "github skills", "learn git"],
+    response: "For Git resources, open the Resources page and select Git.\n\nIncludes Pro Git Book (free online) and GitHub Skills.",
     link: { label: "Git Resources →", href: "resources.html?category=Git" },
   },
   {
     id: "resources-devops",
     patterns: ["devops resources", "aws resources", "docker resources", "cloud resources",
       "learn devops", "learn aws", "learn docker", "infrastructure"],
-    response: "For DevOps resources, open the Resources page and select DevOps.\n\nIncludes the official AWS Documentation and Docker Official Docs.",
+    response: "For DevOps resources, open the Resources page and select DevOps.\n\nIncludes AWS Documentation and Docker Official Docs.",
     link: { label: "DevOps Resources →", href: "resources.html?category=DevOps" },
+  },
+  {
+    id: "resources-gamedev",
+    patterns: ["game dev resources", "unity resources", "godot resources", "game resources",
+      "learn game development", "game programming"],
+    response: "For Game Dev resources, open the Resources page and select GameDev.\n\nIncludes Unity Learn (official tutorials) and the Godot Engine Documentation.",
+    link: { label: "GameDev Resources →", href: "resources.html?category=GameDev" },
+  },
+  {
+    id: "resources-opensource",
+    patterns: ["open source resources", "first contribution", "good first issue",
+      "contribute to open source", "learn open source", "opensource resources"],
+    response: "For Open Source resources, open the Resources page and select OpenSource.\n\nIncludes First Contributions (beginner guide to PRs) and Good First Issues.",
+    link: { label: "OpenSource Resources →", href: "resources.html?category=OpenSource" },
   },
   {
     id: "resources-appdev",
@@ -166,15 +215,13 @@ const SCOPE_KB = [
   },
   {
     id: "resources-android",
-    patterns: ["android resources", "kotlin resources", "android development",
-      "learn android", "learn kotlin"],
-    response: "For Android resources, open the Resources page and select Android.\n\nIncludes the official Android Developer Guides and Kotlin Documentation.",
+    patterns: ["android resources", "kotlin resources", "android development", "learn android", "learn kotlin"],
+    response: "For Android resources, open the Resources page and select Android.\n\nIncludes the Android Developer Guides and Kotlin Documentation.",
     link: { label: "Android Resources →", href: "resources.html?category=Android" },
   },
   {
     id: "resources-ios",
-    patterns: ["ios resources", "swift resources", "swiftui", "apple development",
-      "learn ios", "learn swift"],
+    patterns: ["ios resources", "swift resources", "swiftui", "apple development", "learn ios", "learn swift"],
     response: "For iOS resources, open the Resources page and select iOS.\n\nIncludes the Swift Documentation and Apple Developer Documentation.",
     link: { label: "iOS Resources →", href: "resources.html?category=iOS" },
   },
@@ -220,7 +267,7 @@ const SCOPE_KB = [
     patterns: ["why join", "benefits of joining", "why should i join",
       "what will i learn", "what do i get", "reason to join",
       "worth joining", "scope benefits"],
-    response: "Why join SCOPE?\n\n→ Build real projects, not just theory\n→ Seniors who mentor without gatekeeping\n→ Hackathons, contests, and workshops all year\n→ Hands-on cloud and AWS experience\n→ A technical community across Web, App, ML, Cloud, and Game Dev\n→ Learn by doing — not just watching\n\nSCOPE is where you write your first pull request, win your first hackathon, and figure out what kind of engineer you want to be.",
+    response: "Why join SCOPE?\n\n→ Build real projects, not just theory\n→ Seniors who mentor without gatekeeping\n→ Hackathons, contests, and workshops all year\n→ Hands-on cloud and AWS experience\n→ A technical community across Web, App, ML, Cloud, and Game Dev\n→ Learn by doing — not just watching",
     link: { label: "Join SCOPE →", href: "join.html" },
   },
 
@@ -228,13 +275,13 @@ const SCOPE_KB = [
   {
     id: "nav-home",
     patterns: ["home page", "go home", "main page", "homepage", "back to home"],
-    response: "You're on the main website. The Home page has an overview of SCOPE, featured events, what we do, and why to join.",
+    response: "The Home page has an overview of SCOPE, the featured event, What We Do, and Why Join.",
     link: { label: "Go to Home →", href: "index.html" },
   },
   {
     id: "nav-events",
     patterns: ["where are events", "go to events", "events page", "find events"],
-    response: "Open the Events page to browse Active, Upcoming, and Past events. You can switch between tabs and click 'More Info' for full event details and galleries.",
+    response: "Open the Events page to browse Active, Upcoming, and Past events. Click 'More Info' for full event details and galleries.",
     link: { label: "Go to Events →", href: "events.html" },
   },
   {
@@ -273,52 +320,95 @@ const CHAT_SUGGESTIONS = [
 ];
 
 /* ============================================================
-   INTENT MATCHER
-   Returns best matching KB entry or null.
+   INTENT MATCHER — offline KB
    ============================================================ */
 function matchIntent(raw) {
   const msg = raw.toLowerCase().trim();
 
-  // Exact / substring pattern match — score = matched pattern length (longer = more specific)
-  let best = null;
-  let bestScore = 0;
-
+  let best = null, bestScore = 0;
   for (const entry of SCOPE_KB) {
     for (const pattern of entry.patterns) {
       if (msg.includes(pattern)) {
         const score = pattern.length;
-        if (score > bestScore) {
-          bestScore = score;
-          best = entry;
-        }
+        if (score > bestScore) { bestScore = score; best = entry; }
       }
     }
   }
 
-  // Fallback: word-level token matching (catches partial / fragmented questions)
   if (!best) {
     const tokens = msg.split(/\s+/).filter(t => t.length > 2);
-    let tokenBest = null;
-    let tokenBestScore = 0;
-
+    let tokenBest = null, tokenBestScore = 0;
     for (const entry of SCOPE_KB) {
       let score = 0;
       for (const pattern of entry.patterns) {
         const pTokens = pattern.split(/\s+/);
-        for (const pt of pTokens) {
-          if (tokens.includes(pt)) score++;
-        }
+        for (const pt of pTokens) { if (tokens.includes(pt)) score++; }
       }
-      if (score > tokenBestScore) {
-        tokenBestScore = score;
-        tokenBest = entry;
-      }
+      if (score > tokenBestScore) { tokenBestScore = score; tokenBest = entry; }
     }
-
     if (tokenBestScore >= 2) best = tokenBest;
   }
 
   return best;
+}
+
+/* ============================================================
+   LIVE AI — backend call with offline fallback
+   ============================================================ */
+
+/** Tracks whether the backend is known-unavailable in this session */
+let _aiUnavailable = false;
+
+/**
+ * Try the live AI backend. Returns { reply, link: null } on success,
+ * or null if the backend is unavailable (caller falls back to KB).
+ */
+async function callLiveAI(userText) {
+  if (!AI_ENABLED || _aiUnavailable) return null;
+
+  try {
+    const payload = {
+      message: userText,
+      conversation: _conversation.slice(-MAX_HISTORY_TURNS * 2),
+    };
+
+    const response = await fetch(CHAT_API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+      signal: AbortSignal.timeout(12000), /* 12 s timeout */
+    });
+
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}));
+      const isServerError = response.status >= 500;
+      if (isServerError) {
+        /* Mark unavailable for this session to avoid repeated failures */
+        _aiUnavailable = true;
+      }
+      /* Surface the server's user-facing error if present */
+      const errMsg = data.error || (isServerError
+        ? "SCOPE AI is temporarily unavailable."
+        : "I couldn't process that request.");
+      return { error: errMsg };
+    }
+
+    const data = await response.json();
+    if (!data.success || !data.reply) {
+      return { error: "SCOPE AI returned an empty response." };
+    }
+
+    return { reply: data.reply };
+
+  } catch (err) {
+    /* Network failure, timeout, CORS, etc. — fall back silently */
+    if (err.name === "TimeoutError" || err.name === "AbortError") {
+      return { error: "SCOPE AI is taking too long. Showing offline answer instead." };
+    }
+    /* Network unreachable — mark unavailable and fall back quietly */
+    _aiUnavailable = true;
+    return null;
+  }
 }
 
 /* ============================================================
@@ -331,7 +421,11 @@ function buildChatWidget() {
   if (_chatBuilt) return;
   _chatBuilt = true;
 
-  /* ── Panel ── */
+  /* Status label reflects the configured mode */
+  const modeLabel = AI_ENABLED
+    ? `<span class="chat-mode-badge chat-mode-ai" aria-live="polite">// AI</span>`
+    : `<span class="chat-mode-badge chat-mode-offline">// offline</span>`;
+
   const panel = document.createElement("div");
   panel.id = "chat-panel";
   panel.setAttribute("role", "dialog");
@@ -343,8 +437,9 @@ function buildChatWidget() {
       <div style="display:flex;align-items:center;gap:0.55rem;">
         <span class="status-dot" aria-hidden="true"></span>
         <span>SCOPE Help</span>
+        ${modeLabel}
       </div>
-      <button id="chat-close" aria-label="Close help chat">✕</button>
+      <button id="chat-close" aria-label="Close help chat">&#215;</button>
     </div>
     <div class="chat-messages" id="chat-messages" role="log" aria-live="polite" aria-label="Chat messages"></div>
     <div class="chat-suggestions" id="chat-suggestions" aria-label="Suggested questions"></div>
@@ -365,14 +460,13 @@ function buildChatWidget() {
   `;
   document.body.appendChild(panel);
 
-  /* ── Welcome ── */
-  appendBotMessage(
-    "Hi! I'm the SCOPE Help assistant. I can answer questions about SCOPE Club, events, resources, joining, and how to navigate the site.",
-    null
-  );
+  /* Welcome message */
+  const welcomeText = AI_ENABLED
+    ? "Hi! I'm the SCOPE AI assistant. Ask me anything about SCOPE Club, events, resources, or how to join."
+    : "Hi! I'm the SCOPE Help assistant. I can answer questions about SCOPE Club, events, resources, joining, and how to navigate the site.";
+  appendBotMessage(welcomeText, null);
   renderSuggestions();
 
-  /* ── Events ── */
   document.getElementById("chat-close").addEventListener("click", closeChatWidget);
 
   document.getElementById("chat-form").addEventListener("submit", (e) => {
@@ -384,7 +478,6 @@ function buildChatWidget() {
     handleUserMessage(text);
   });
 
-  /* Keyboard: Escape closes */
   panel.addEventListener("keydown", (e) => {
     if (e.key === "Escape") closeChatWidget();
   });
@@ -409,12 +502,48 @@ function hideSuggestions() {
   if (bar) bar.style.display = "none";
 }
 
-function handleUserMessage(text) {
+/* ── Main message handler — async, supports live AI + KB fallback ── */
+async function handleUserMessage(text) {
   appendUserMessage(text);
+  hideSuggestions();
 
-  /* Simulate a brief "typing" pause for natural feel */
   const typingEl = appendTyping();
 
+  /* ── Try live AI first ── */
+  if (AI_ENABLED) {
+    /* Optimistically add to history; remove on failure */
+    addToHistory("user", text);
+    const aiResult = await callLiveAI(text);
+
+    if (aiResult && aiResult.reply) {
+      typingEl.remove();
+      addToHistory("assistant", aiResult.reply);
+      updateModeLabel(true);
+      appendBotMessage(aiResult.reply, null);
+      return;
+    }
+
+    if (aiResult && aiResult.error) {
+      /* Server returned a user-facing error — show it, then KB fallback */
+      typingEl.remove();
+      /* Pop the user turn we added since we're going to offline KB */
+      _conversation.pop();
+      updateModeLabel(false);
+      appendBotMessage(aiResult.error + "\n\nHere's what I found in my local knowledge base:", null);
+      /* Fall through to KB match below */
+      const match = matchIntent(text);
+      if (match) {
+        appendBotMessage(match.response, match.link || null);
+      }
+      return;
+    }
+
+    /* null = silent network failure, fall through to KB */
+    _conversation.pop();
+    updateModeLabel(false);
+  }
+
+  /* ── Offline KB fallback ── */
   setTimeout(() => {
     typingEl.remove();
     const match = matchIntent(text);
@@ -422,15 +551,30 @@ function handleUserMessage(text) {
       appendBotMessage(match.response, match.link || null);
     } else {
       appendBotMessage(
-        "I can help with verified information about SCOPE — its events, resources, team, joining details, and contact info. Try one of the suggestions below.",
+        "I can help with verified information about SCOPE — events, resources, how to join, and contact info. Try one of the suggestions below.",
         null
       );
       renderSuggestions();
-      document.getElementById("chat-suggestions").style.display = "flex";
+      const sugBar = document.getElementById("chat-suggestions");
+      if (sugBar) sugBar.style.display = "flex";
     }
   }, 380);
 }
 
+/** Dynamically update the mode badge after a backend failure */
+function updateModeLabel(isAI) {
+  const badge = document.querySelector(".chat-mode-badge");
+  if (!badge) return;
+  if (isAI) {
+    badge.textContent = "// AI";
+    badge.className = "chat-mode-badge chat-mode-ai";
+  } else {
+    badge.textContent = "// offline";
+    badge.className = "chat-mode-badge chat-mode-offline";
+  }
+}
+
+/* ── DOM helpers ── */
 function appendUserMessage(text) {
   const list = document.getElementById("chat-messages");
   const el = document.createElement("div");
@@ -445,7 +589,6 @@ function appendBotMessage(text, link) {
   const el = document.createElement("div");
   el.className = "chat-bubble bot";
 
-  /* Convert newlines to <br> — text is internal/trusted copy, no user input */
   const para = document.createElement("p");
   para.style.cssText = "margin:0;white-space:pre-line;";
   para.textContent = text;
@@ -484,7 +627,6 @@ function openChatWidget() {
   const launcher = document.getElementById("chat-launcher");
   if (!panel) return;
   _chatOpen = true;
-  /* Show panel first (makes display:flex), then trigger transition on next frame */
   panel.style.display = "flex";
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
@@ -493,7 +635,6 @@ function openChatWidget() {
     });
   });
   if (launcher) launcher.setAttribute("aria-expanded", "true");
-  /* Focus input after transition */
   setTimeout(() => {
     const inp = document.getElementById("chat-input");
     if (inp) inp.focus();
@@ -507,11 +648,8 @@ function closeChatWidget() {
   _chatOpen = false;
   panel.classList.remove("is-open");
   panel.setAttribute("aria-hidden", "true");
-  /* Hide after transition completes */
   setTimeout(() => {
-    if (!panel.classList.contains("is-open")) {
-      panel.style.display = "";
-    }
+    if (!panel.classList.contains("is-open")) panel.style.display = "";
   }, 300);
   if (launcher) {
     launcher.setAttribute("aria-expanded", "false");
@@ -519,11 +657,11 @@ function closeChatWidget() {
   }
 }
 
-/* ── Launcher stub (always visible) ── */
+/* ── Launcher ── */
 document.addEventListener("DOMContentLoaded", () => {
   const launcher = document.createElement("button");
   launcher.id = "chat-launcher";
-  launcher.setAttribute("aria-label", "Open SCOPE help chat");
+  launcher.setAttribute("aria-label", AI_ENABLED ? "Open SCOPE AI assistant" : "Open SCOPE help chat");
   launcher.setAttribute("aria-expanded", "false");
   launcher.setAttribute("aria-controls", "chat-panel");
   launcher.innerHTML = `
@@ -534,12 +672,8 @@ document.addEventListener("DOMContentLoaded", () => {
     </svg>
   `;
   document.body.appendChild(launcher);
-
   launcher.addEventListener("click", () => {
-    if (_chatOpen) {
-      closeChatWidget();
-    } else {
-      openChatWidget();
-    }
+    if (_chatOpen) closeChatWidget();
+    else openChatWidget();
   });
 });

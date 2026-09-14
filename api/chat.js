@@ -1,69 +1,130 @@
-/* ============================================================
-   /api/chat — Vercel serverless function.
-   Deploy this file at api/chat.js in a Vercel project (or adapt
-   the handler body to Netlify Functions / AWS Lambda — the
-   Anthropic call itself is identical).
+/**
+ * SCOPE Club — /api/chat  (Vercel serverless function)
+ *
+ * This is the Vercel-hosted version of the chat backend.
+ * For AWS Lambda deployment, see lambda/chat/index.js instead.
+ *
+ * The function calls the Anthropic API (Claude) to power the SCOPE
+ * AI assistant. The API key is stored as a server-side environment
+ * variable — it is NEVER exposed to the browser.
+ *
+ * SETUP (Vercel):
+ *   1. Push this project to GitHub.
+ *   2. Import at vercel.com → Project Settings → Environment Variables.
+ *   3. Add: ANTHROPIC_API_KEY  (server-side only)
+ *   4. Deploy. The function is available at /api/chat automatically.
+ *
+ * REQUEST:
+ *   POST /api/chat
+ *   Content-Type: application/json
+ *   { "message": "...", "conversation": [{ "role": "user"|"assistant", "content": "..." }] }
+ *
+ * RESPONSE:
+ *   200  { "success": true,  "reply": "..." }
+ *   4xx  { "success": false, "error": "..." }
+ *   5xx  { "success": false, "error": "..." }
+ */
 
-   SETUP:
-   1. In the Vercel dashboard: Project Settings → Environment
-      Variables → add ANTHROPIC_API_KEY (server-side only, never
-      exposed to the browser).
-   2. Deploy. Vercel auto-detects anything in /api as a function.
-   3. The chat widget (js/chatbot.js) already POSTs to /api/chat.
+"use strict";
 
-   This function grounds the bot in the club's own real data
-   (team/events/resources) so it can't invent facts about SCOPE
-   Club — replace the placeholder text below with the same
-   verified content used in js/data.js once that's finalized.
-   ============================================================ */
+/* ── System prompt — mirrors lambda/chat/index.js ── */
+const SYSTEM_PROMPT = `You are the SCOPE Club help assistant embedded in the SCOPE Club website.
 
-const SYSTEM_PROMPT = `You are the SCOPE Club help assistant on the club's website.
-Only answer questions about SCOPE Club: events, joining, resources, and general club info.
-If you don't know something from the information below, say so plainly and point the
-person to the Contact page — never invent facts, names, dates, or links.
+SCOPE Club is the official technical student club of MLR Institute of Technology (MLRIT), Hyderabad.
+SCOPE stands for School of Programming Excellence.
 
-CLUB INFO (verified — replace/expand this block with real content):
-- SCOPE Club is an engineering/technology student club.
-- Pages: Home, Team, Events, Resources, Contact Us, Join Us.
-- To join, visit the Join Us page and complete the application.
-- Events are shown on the Events page under Active/Upcoming/Past tabs.
-- Resource categories: AppDev, Python, Frontend, Backend, ML, Git, DevOps, Android (Kotlin), iOS (Swift).
+YOUR JOB:
+- Answer questions about SCOPE Club, its events, resources, how to join, and how to navigate the site.
+- Be concise, technically accurate, and friendly — you are speaking to engineering students.
+- Never invent facts, names, dates, URLs, statistics, or achievements not listed below.
+- If you genuinely don't know something, say so plainly and direct the user to contact the club directly.
+
+VERIFIED CLUB INFORMATION:
+- Founded to build a strong coding culture at MLRIT.
+- Technical areas: Web Development, App Development, AI/ML, Cloud Computing, Game Development, Open Source.
+- The club runs hackathons, coding contests, cloud workshops, and flagship events.
+- Past events: ZENITH '25 (Dec 2025), AWS Cloud Workshop (Oct 2025), __init__ Saga (Apr 2025, ₹20,000 prize), ZENITH 24 – DataVoyage (Nov 2024).
+- Current active event: AWS Cloud Trek 2026 — 11–12 September 2026, MLRIT Hyderabad. 2-day bootcamp and contest on agentic engineering, run by AWS Student Builder Group × SCOPE Club.
+- Contact: scopeclub@mlrinstitutions.ac.in
+- Instagram: @mlrit_scope  |  LinkedIn: SCOPE Club MLRIT  |  GitHub: github.com/scopeclub  |  X: @MlritScope
+- Location: MT 003-SCOPE CLUB, MLRIT, Dundigal Police Station Road, Hyderabad - 500 043, Telangana, India.
+
+SITE NAVIGATION:
+- Home (index.html) — overview, hero event, About section, What We Do, Why Join
+- Events (events.html) — Active / Upcoming / Past tabs
+- Resources (resources.html) — curated learning links by category
+- Team (team.html) — team structure (profiles coming soon)
+- Contact (contact.html) — email, address, social links, contact form
+- Join Us (join.html) — application form for MLRIT students
+
+DO NOT invent team member names, statistics, partnerships, or links not listed above.
 `;
 
-// Simple in-memory rate limit per serverless instance (best-effort only —
-// use a real store like Upstash/Redis if you need this enforced across
-// all instances / restarts).
-const requestLog = new Map();
-const RATE_LIMIT = 10; // requests
-const RATE_WINDOW_MS = 60_000;
-
-function isRateLimited(ip) {
+/* ── Simple in-memory rate limiter ── */
+const _rateLimitMap = new Map();
+function isRateLimited(ip, limit = 20, windowMs = 60_000) {
   const now = Date.now();
-  const entry = requestLog.get(ip) || [];
-  const recent = entry.filter((t) => now - t < RATE_WINDOW_MS);
-  recent.push(now);
-  requestLog.set(ip, recent);
-  return recent.length > RATE_LIMIT;
+  const hits = (_rateLimitMap.get(ip) || []).filter((t) => now - t < windowMs);
+  hits.push(now);
+  _rateLimitMap.set(ip, hits);
+  return hits.length > limit;
+}
+
+/* ── Input validation ── */
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+function validateBody(body) {
+  if (!body || typeof body !== "object") return "Request body must be a JSON object.";
+  const { message, conversation } = body;
+  if (typeof message !== "string" || !message.trim()) return "message must be a non-empty string.";
+  if (message.length > 1000) return "message must be 1000 characters or fewer.";
+  if (conversation !== undefined) {
+    if (!Array.isArray(conversation)) return "conversation must be an array.";
+    if (conversation.length > 40) return "conversation history too long (max 40 turns).";
+    for (const t of conversation) {
+      if (typeof t.role !== "string" || typeof t.content !== "string") {
+        return "Each conversation turn needs role (string) and content (string).";
+      }
+    }
+  }
+  return null; // valid
 }
 
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
+  /* CORS headers — tighten ALLOWED_ORIGINS in production */
+  const allowedOrigin = process.env.ALLOWED_ORIGINS || "*";
+  res.setHeader("Access-Control-Allow-Origin", allowedOrigin);
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  const ip = req.headers["x-forwarded-for"] || req.socket?.remoteAddress || "unknown";
+  if (req.method === "OPTIONS") return res.status(204).end();
+  if (req.method !== "POST") return res.status(405).json({ success: false, error: "Method not allowed." });
+
+  /* Rate limit */
+  const ip = req.headers["x-forwarded-for"]?.split(",")[0].trim() || "unknown";
   if (isRateLimited(ip)) {
-    return res.status(429).json({ error: "Too many requests — please wait a moment." });
+    return res.status(429).json({ success: false, error: "Too many requests — please wait a moment." });
   }
 
-  const { messages } = req.body || {};
-  if (!Array.isArray(messages) || messages.length === 0) {
-    return res.status(400).json({ error: "messages array is required" });
+  /* Validate */
+  const validationError = validateBody(req.body);
+  if (validationError) return res.status(400).json({ success: false, error: validationError });
+
+  /* Build messages */
+  const history = (req.body.conversation || []).slice(-10);
+  const messages = [
+    ...history.map((t) => ({ role: t.role, content: t.content })),
+    { role: "user", content: req.body.message.trim() },
+  ];
+
+  /* Call Anthropic */
+  if (!process.env.ANTHROPIC_API_KEY) {
+    return res.status(503).json({
+      success: false,
+      error: "SCOPE AI is not configured on this server.",
+    });
   }
 
-  // Cap history sent to the model to keep requests small and cheap
-  const trimmed = messages.slice(-12);
-
+  let reply;
   try {
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -73,29 +134,34 @@ export default async function handler(req, res) {
         "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-6",
-        max_tokens: 400,
+        model: "claude-3-5-sonnet-20241022",
+        max_tokens: 500,
         system: SYSTEM_PROMPT,
-        messages: trimmed.map((m) => ({ role: m.role, content: m.content })),
+        messages,
       }),
     });
 
     if (!response.ok) {
-      const errText = await response.text();
-      console.error("Anthropic API error:", errText);
-      return res.status(502).json({ error: "Upstream chat service error" });
+      const text = await response.text();
+      console.error("[api/chat.js] Anthropic error:", response.status, text);
+      return res.status(502).json({ success: false, error: "Unable to reach SCOPE AI right now." });
     }
 
     const data = await response.json();
-    const reply = data.content
-      ?.filter((block) => block.type === "text")
-      .map((block) => block.text)
+    reply = data.content
+      ?.filter((b) => b.type === "text")
+      .map((b) => b.text)
       .join("\n")
       .trim();
 
-    return res.status(200).json({ reply: reply || "Sorry, I couldn't generate a reply." });
+    if (!reply) throw new Error("Empty model response.");
   } catch (err) {
-    console.error("Chat handler error:", err);
-    return res.status(500).json({ error: "Server error" });
+    console.error("[api/chat.js] Handler error:", err.message);
+    return res.status(500).json({
+      success: false,
+      error: "SCOPE AI is temporarily unavailable. Please try again shortly.",
+    });
   }
+
+  return res.status(200).json({ success: true, reply });
 }

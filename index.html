@@ -15,7 +15,14 @@
   <meta property="og:title" content="SCOPE Club — Official Technical Club of MLRIT" />
   <meta property="og:description" content="Build. Break. Ship. Join SCOPE — MLRIT's most active technical club." />
   <meta property="og:type" content="website" />
-  <meta property="og:image" content="assets/images/branding/scope-club-logo.jpg" />
+  <meta property="og:image" content="assets/images/events/aws-cloud-trek-2026-poster.jpg" />
+
+  <!-- Twitter / X Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@MlritScope" />
+  <meta name="twitter:title" content="SCOPE Club — Official Technical Club of MLRIT" />
+  <meta name="twitter:description" content="Build. Break. Ship. Join SCOPE — MLRIT's most active technical club." />
+  <meta name="twitter:image" content="assets/images/events/aws-cloud-trek-2026-poster.jpg" />
 
   <!-- Fonts — preconnect for performance -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -35,6 +42,8 @@
   <div class="ambient-bg" aria-hidden="true"></div>
   <div id="cursor-field" aria-hidden="true"></div>
   <canvas id="particle-canvas" aria-hidden="true"></canvas>
+  <!-- Live code wallpaper — SCOPE meaning visualised as falling code tokens -->
+  <canvas id="code-wallpaper" aria-hidden="true"></canvas>
 
   <!-- Nav injection target -->
   <div id="nav-root"></div>
@@ -61,21 +70,28 @@
               to cloud computing, we go beyond the classroom.
             </p>
             <div class="hero-actions">
-              <a href="join.html" class="btn btn-primary">Join SCOPE →</a>
-              <a href="events.html" class="btn">View Events</a>
-              <a href="resources.html" class="btn">Resources</a>
+              <a href="events.html" class="btn btn-primary">Explore Events →</a>
+              <a href="#about" class="btn">About SCOPE</a>
+              <a href="join.html" class="btn">Join Us</a>
             </div>
           </div>
 
-          <div class="hero-visual" aria-hidden="true">
-            <div class="hero-badge-card">
-              <span class="dim">$ scope --status</span><br>
-              <span class="acc">✓</span> <span class="dim">Club:</span> <span class="acc">SCOPE MLRIT</span><br>
-              <span class="acc">✓</span> <span class="dim">Domain:</span> <span class="cyn">Technical</span><br>
-              <span class="acc">✓</span> <span class="dim">Event:</span> <span class="acc">AWS Cloud Trek</span><br>
-              <span class="acc">●</span> <span class="dim">Status:</span> <span class="acc">LIVE</span><br>
-              <span class="dim">──────────────────</span><br>
-              <span class="dim">Ready to</span> <span class="acc">build</span> <span class="dim">with us?</span>
+          <!-- Featured event card — AWS Cloud Trek 2026 -->
+          <div class="hero-visual">
+            <div class="hero-event-card" aria-label="Featured event: AWS Cloud Trek 2026">
+              <div class="hero-event-poster">
+                <img src="assets/images/events/aws-cloud-trek-2026-poster.jpg" alt="AWS Cloud Trek 2026 — event poster"
+                  width="380" height="540" loading="eager" />
+              </div>
+              <div class="hero-event-meta">
+                <span class="badge live"><span class="dot" aria-hidden="true"></span> LIVE NOW</span>
+                <p class="hero-event-title">AWS Cloud Trek 2026</p>
+                <p class="hero-event-detail">11–12 Sep 2026 &nbsp;·&nbsp; MLRIT, Hyderabad</p>
+                <button class="btn btn-sm hero-event-cta" data-open-modal="aws-cloud-trek-2026" aria-haspopup="dialog"
+                  aria-label="View AWS Cloud Trek 2026 event details">
+                  View Details →
+                </button>
+              </div>
             </div>
           </div>
 
@@ -86,7 +102,7 @@
     <!-- ============================================================
        ABOUT / INSIDE SCOPE
        ============================================================ -->
-    <section class="about-section" aria-labelledby="about-heading">
+    <section class="about-section" id="about" aria-labelledby="about-heading">
       <div class="container">
         <div class="about-grid">
 
@@ -493,6 +509,7 @@
     }
   </script>
   <script src="js/main.js"></script>
+  <script src="js/codeWallpaper.js"></script>
   <script src="js/events.js"></script>
   <script src="js/chatbot.js"></script>
 

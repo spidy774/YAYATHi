@@ -25,9 +25,15 @@ const SCOPE_CONTACT = {
 /* ---------- Events ---------- */
 /*
  * statusOverride: null = auto-computed from dates.
- * For AWS Cloud Trek 2026 (11–12 Sep 2026) we force "active"
- * so it shows as LIVE NOW during the submission/demo period
- * (current date in system is 12 Sep 2026).
+ *
+ * EDITORIAL OVERRIDE NOTE:
+ * When statusOverride is set to a non-null string it permanently
+ * overrides the computed date logic. You MUST manually update or
+ * remove the override when the real event status changes, otherwise
+ * the event will continue to display the overridden state indefinitely.
+ *
+ * Example: set statusOverride to null (or remove the property) once
+ * AWS Cloud Trek 2026 is over to let the date logic take over.
  */
 /*
  * screenshots: additional supplied images shown in the modal gallery.
@@ -370,10 +376,44 @@ const SCOPE_RESOURCES = [
     description: "Official Apple developer docs covering SwiftUI, UIKit, Xcode, and frameworks.",
     visitUrl: "https://developer.apple.com/documentation/",
   },
+  /* Game Development */
+  {
+    id: "r-game-1",
+    title: "Unity Learn",
+    category: "GameDev",
+    type: "tutorial",
+    description: "Official Unity learning platform — beginner to advanced tutorials, projects, and live sessions.",
+    visitUrl: "https://learn.unity.com/",
+  },
+  {
+    id: "r-game-2",
+    title: "Godot Engine Documentation",
+    category: "GameDev",
+    type: "documentation",
+    description: "Official Godot Engine docs — GDScript reference, 2D/3D tutorials, and engine architecture.",
+    visitUrl: "https://docs.godotengine.org/en/stable/",
+  },
+  /* Open Source */
+  {
+    id: "r-os-1",
+    title: "First Contributions",
+    category: "OpenSource",
+    type: "tutorial",
+    description: "A hands-on guide to making your first open-source contribution via GitHub pull requests.",
+    visitUrl: "https://firstcontributions.github.io/",
+  },
+  {
+    id: "r-os-2",
+    title: "Good First Issues",
+    category: "OpenSource",
+    type: "github",
+    description: "Curated list of beginner-friendly open-source issues across popular GitHub repositories.",
+    visitUrl: "https://goodfirstissues.com/",
+  },
 ];
 
 const RESOURCE_CATEGORIES = [
-  "All", "AppDev", "Python", "Frontend", "Backend", "ML", "Git", "DevOps", "Android", "iOS",
+  "All", "AppDev", "Python", "Frontend", "Backend", "ML", "Git", "DevOps", "Android", "iOS", "GameDev", "OpenSource",
 ];
 
 /* ---------- Join ---------- */

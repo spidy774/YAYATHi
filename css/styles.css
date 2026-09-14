@@ -3613,3 +3613,168 @@ body>* {
 .contact-social-btn:active {
   transform: scale(0.94);
 }
+
+/* ============================================================
+   HERO — FEATURED EVENT CARD
+   Shows the real AWS Cloud Trek 2026 poster with event meta.
+   ============================================================ */
+
+.hero-event-card {
+  position: relative;
+  width: min(320px, 90vw);
+  background: var(--bg-card);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px var(--border),
+    0 24px 64px rgba(0, 0, 0, 0.6),
+    0 0 40px rgba(61, 255, 168, 0.08);
+  transition: transform var(--dur-mid) var(--ease),
+    box-shadow var(--dur-mid) var(--ease);
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .hero-event-card:hover {
+    transform: translateY(-6px) scale(1.015);
+    box-shadow:
+      0 0 0 1px var(--border-mid),
+      0 32px 80px rgba(0, 0, 0, 0.65),
+      0 0 52px rgba(61, 255, 168, 0.14);
+  }
+}
+
+.hero-event-poster {
+  width: 100%;
+  background: var(--bg-elevated);
+  overflow: hidden;
+  /* contain the full poster — no cropping */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-event-poster img {
+  width: 100%;
+  height: auto;
+  max-height: 340px;
+  object-fit: contain;
+  object-position: center top;
+  display: block;
+  transition: transform var(--dur-slow) var(--ease);
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .hero-event-card:hover .hero-event-poster img {
+    transform: scale(1.03);
+  }
+}
+
+.hero-event-meta {
+  padding: 1rem 1.25rem 1.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  border-top: 1px solid var(--border);
+}
+
+.hero-event-title {
+  font-family: var(--font-display);
+  font-size: 0.97rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+  line-height: 1.25;
+}
+
+.hero-event-detail {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-faint);
+  margin: 0;
+  letter-spacing: 0.03em;
+}
+
+.hero-event-cta {
+  align-self: flex-start;
+  margin-top: 0.35rem;
+}
+
+/* Responsive: stack on narrow hero layouts */
+@media (max-width: 860px) {
+  .hero-inner {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-event-card {
+    width: min(300px, 80vw);
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-event-poster img {
+    max-height: 220px;
+  }
+}
+
+/* ============================================================
+   CHATBOT — MODE BADGE
+   Shows // AI (green) when live backend is active,
+   // offline (faint) when using the local knowledge base.
+   ============================================================ */
+
+.chat-mode-badge {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.07em;
+  padding: 0.15em 0.5em;
+  border-radius: var(--radius-xs);
+  display: inline-block;
+  line-height: 1.5;
+}
+
+.chat-mode-offline {
+  color: var(--text-faint);
+  background: transparent;
+}
+
+.chat-mode-ai {
+  color: var(--accent);
+  background: var(--accent-pale);
+  border: 1px solid var(--border);
+}
+
+/* ============================================================
+   CODE WALLPAPER CANVAS
+   Falls behind all content. Fixed position, full viewport.
+   Driven by js/codeWallpaper.js — only on index.html.
+   ============================================================ */
+#code-wallpaper {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  /* same layer as particle canvas */
+  pointer-events: none;
+  opacity: 0;
+  /* starts hidden — JS fades it in */
+  transition: opacity 2.4s ease;
+}
+
+#code-wallpaper.is-ready {
+  opacity: 0.52;
+  /* final opacity — atmospheric, not dominant */
+}
+
+@media (max-width: 768px) {
+  #code-wallpaper.is-ready {
+    opacity: 0.34;
+    /* pull back further on mobile */
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #code-wallpaper {
+    display: none;
+  }
+}
