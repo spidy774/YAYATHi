@@ -3778,3 +3778,175 @@ body>* {
     display: none;
   }
 }
+
+/* ============================================================
+   CINEMATIC ATMOSPHERIC DEPTH SYSTEM
+   Inspired by volumetric clouds + light shafts, translated
+   into SCOPE's cloud computing/engineering identity.
+   Three gradient layers at different depths + volumetric rays.
+   ============================================================ */
+.atmos-depth {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 3.2s ease;
+}
+
+.atmos-depth.is-ready {
+  opacity: 1;
+}
+
+/* ── Far layer — distant "cloudscape", slowest movement ── */
+.atmos-far {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 140% 60% at 20% 85%, rgba(61, 255, 168, 0.012) 0%, transparent 48%),
+    radial-gradient(ellipse 100% 55% at 75% 80%, rgba(34, 211, 238, 0.008) 0%, transparent 52%),
+    radial-gradient(ellipse 90% 70% at 50% 95%, rgba(167, 139, 250, 0.006) 0%, transparent 55%);
+  filter: blur(32px);
+  animation: atmosDriftFar 52s ease-in-out infinite alternate;
+  will-change: transform, opacity;
+}
+
+/* ── Mid layer — larger cloud forms, medium speed ── */
+.atmos-mid {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 110% 50% at 30% 70%, rgba(61, 255, 168, 0.018) 0%, transparent 45%),
+    radial-gradient(ellipse 85% 60% at 65% 75%, rgba(34, 211, 238, 0.014) 0%, transparent 50%),
+    radial-gradient(ellipse 70% 55% at 90% 80%, rgba(61, 255, 168, 0.010) 0%, transparent 48%);
+  filter: blur(24px);
+  animation: atmosDriftMid 38s ease-in-out infinite alternate-reverse;
+  will-change: transform, opacity;
+}
+
+/* ── Near layer — closest atmospheric haze, fastest ── */
+.atmos-near {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 95% 45% at 15% 65%, rgba(61, 255, 168, 0.024) 0%, transparent 42%),
+    radial-gradient(ellipse 80% 50% at 80% 68%, rgba(34, 211, 238, 0.020) 0%, transparent 46%);
+  filter: blur(18px);
+  animation: atmosDriftNear 26s ease-in-out infinite alternate;
+  will-change: transform, opacity;
+}
+
+/* ── Volumetric rays — subtle diagonal light shafts ── */
+.atmos-rays {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(125deg, transparent 0%, transparent 32%,
+      rgba(61, 255, 168, 0.016) 36%, transparent 40%,
+      transparent 52%, rgba(34, 211, 238, 0.012) 56%, transparent 60%,
+      transparent 72%, rgba(61, 255, 168, 0.014) 76%, transparent 80%,
+      transparent 100%);
+  filter: blur(12px);
+  animation: atmosRaysDrift 34s ease-in-out infinite alternate;
+  will-change: transform, opacity;
+}
+
+/* ── Drift animations — very slow, subtle shifts ── */
+@keyframes atmosDriftFar {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: translate(2%, -1.5%) scale(1.03);
+    opacity: 0.92;
+  }
+
+  100% {
+    transform: translate(-1.5%, 2%) scale(0.98);
+    opacity: 0.88;
+  }
+}
+
+@keyframes atmosDriftMid {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+
+  45% {
+    transform: translate(-2.5%, 1.8%) scale(1.04);
+    opacity: 0.95;
+  }
+
+  100% {
+    transform: translate(2.2%, -2%) scale(0.97);
+    opacity: 0.90;
+  }
+}
+
+@keyframes atmosDriftNear {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+
+  40% {
+    transform: translate(3%, -2.5%) scale(1.05);
+    opacity: 0.96;
+  }
+
+  100% {
+    transform: translate(-2.5%, 2.8%) scale(0.96);
+    opacity: 0.92;
+  }
+}
+
+@keyframes atmosRaysDrift {
+  0% {
+    transform: translateX(0) rotate(0deg);
+    opacity: 0.55;
+  }
+
+  50% {
+    transform: translateX(1.5%) rotate(0.3deg);
+    opacity: 0.68;
+  }
+
+  100% {
+    transform: translateX(-1.2%) rotate(-0.2deg);
+    opacity: 0.48;
+  }
+}
+
+/* ── Reduced motion: static atmosphere ── */
+@media (prefers-reduced-motion: reduce) {
+
+  .atmos-far,
+  .atmos-mid,
+  .atmos-near,
+  .atmos-rays {
+    animation: none !important;
+  }
+}
+
+/* ── Mobile: lighter atmosphere ── */
+@media (max-width: 768px) {
+  .atmos-far {
+    opacity: 0.65;
+  }
+
+  .atmos-mid {
+    opacity: 0.70;
+  }
+
+  .atmos-near {
+    opacity: 0.75;
+  }
+
+  .atmos-rays {
+    opacity: 0.50;
+  }
+}

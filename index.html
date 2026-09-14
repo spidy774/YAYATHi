@@ -45,6 +45,14 @@
   <!-- Live code wallpaper — SCOPE meaning visualised as falling code tokens -->
   <canvas id="code-wallpaper" aria-hidden="true"></canvas>
 
+  <!-- Cinematic atmospheric depth layers — cloud-like forms, volumetric lighting -->
+  <div class="atmos-depth" aria-hidden="true">
+    <div class="atmos-layer atmos-far"></div>
+    <div class="atmos-layer atmos-mid"></div>
+    <div class="atmos-layer atmos-near"></div>
+    <div class="atmos-rays"></div>
+  </div>
+
   <!-- Nav injection target -->
   <div id="nav-root"></div>
 
@@ -510,6 +518,7 @@
   </script>
   <script src="js/main.js"></script>
   <script src="js/codeWallpaper.js"></script>
+  <script src="js/atmosDepth.js"></script>
   <script src="js/events.js"></script>
   <script src="js/chatbot.js"></script>
 
